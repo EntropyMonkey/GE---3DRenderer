@@ -17,6 +17,19 @@ extern "C"
 #define SCREEN_HEIGHT 480
 #define SCREEN_COLORDEPTH 32
 
+#include <iostream>
+#include <glm/glm.hpp>
+
+#include "Triangle.h"
+#include "Renderer.h"
+
+using namespace std;
+using namespace glm;
+
+void Init();
+
+Renderer renderer;
+
 int main (int argc, char* argv[])
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) 
@@ -29,10 +42,44 @@ int main (int argc, char* argv[])
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 
-		SCREEN_COLORDEPTH, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
+    SDL_Surface *screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 
+		SCREEN_COLORDEPTH, SDL_SWSURFACE);
 
-	SDL_Delay(3000);
+	bool quit;
+	SDL_Event event = SDL_Event();
+
+	Init();
+
+	while(!quit)
+	{
+		if(SDL_PollEvent(&event))
+        {
+			if(event.type == SDL_KEYDOWN)
+            {
+				cout << (char)event.key.keysym.sym << endl;
+			}
+			else if (event.type == SDL_KEYUP)
+			{
+				cout << (char)event.key.keysym.sym << endl;
+			}
+			else if( event.type == SDL_QUIT )
+            {
+				quit = true;
+            }
+		}
+
+		renderer.Render(screen);
+
+		SDL_Flip(screen);
+	}
 
 	return 0;
+}
+
+void Init()
+{
+	Triangle tri1 = Triangle(vec3(), vec3(), vec3());
+
+	renderer = Renderer();
+	renderer.Add(&tri1);
 }
