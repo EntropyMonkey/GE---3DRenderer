@@ -5,23 +5,23 @@
 #include <list>
 
 #include "Mesh.h"
+#include "Vertex.h"
 
 class Triangle : public Mesh
 {
 public:
-	Triangle(glm::vec3 _p1, glm::vec3 _p2, glm::vec3 _p3);
-
-	void GetVertices(std::list<glm::vec3> &vertexList)
+	Triangle(Vertex _p1, Vertex _p2, Vertex _p3)
 	{
-		vertexList.push_back(p3);
-		vertexList.push_back(p2);
-		vertexList.push_back(p1);
-	}
+		modelMatrix = glm::mat4(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1);
 
-private:
-	glm::vec3 p1;
-	glm::vec3 p2;
-	glm::vec3 p3;
+		vertices.push_back(_p1);
+		vertices.push_back(_p2);
+		vertices.push_back(_p3);
+	}
 };
 
 #endif

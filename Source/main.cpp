@@ -13,13 +13,10 @@ extern "C"
 #endif
 #endif
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-#define SCREEN_COLORDEPTH 32
-
 #include <iostream>
 #include <glm/glm.hpp>
 
+#include "Defines.h"
 #include "Triangle.h"
 #include "Renderer.h"
 
@@ -28,7 +25,7 @@ using namespace glm;
 
 void Init();
 
-Renderer renderer;
+Renderer *renderer;
 
 int main (int argc, char* argv[])
 {
@@ -50,17 +47,52 @@ int main (int argc, char* argv[])
 
 	Init();
 
+	bool pan;
+	vec3 panDirection;
+
+	quit = false;
 	while(!quit)
 	{
 		if(SDL_PollEvent(&event))
         {
+			if (event.type == SDL_QUIT)
+			{
+				quit = true;
+				continue;
+			}
+
 			if(event.type == SDL_KEYDOWN)
             {
-				cout << (char)event.key.keysym.sym << endl;
+				if (event.key.keysym.sym == SDLK_LEFT)
+				{
+					pan = true;
+					panDirection = vec3(-1, 0, 0);
+				}
+				else if (event.key.keysym.sym == SDLK_RIGHT)
+				{
+					pan = true;
+					panDirection = vec3(1, 0, 0);
+				}
+				else if (event.key.keysym.sym == SDLK_UP)
+				{
+					pan = true;
+					panDirection = vec3(0, 0, 1);
+				}
+				else if (event.key.keysym.sym == SDLK_DOWN)
+				{
+					pan = true;
+					panDirection = vec3(0, 0, -1);
+				}
 			}
 			else if (event.type == SDL_KEYUP)
 			{
-				cout << (char)event.key.keysym.sym << endl;
+				if (event.key.keysym.sym == SDLK_LEFT || 
+					event.key.keysym.sym == SDLK_RIGHT ||
+					event.key.keysym.sym == SDLK_UP ||
+					event.key.keysym.sym == SDLK_DOWN)
+				{
+					pan = false;
+				}
 			}
 			else if( event.type == SDL_QUIT )
             {
@@ -68,7 +100,13 @@ int main (int argc, char* argv[])
             }
 		}
 
-		renderer.Render(screen);
+		if (pan)
+		{
+			panDirection *= 0.1f;
+			renderer->PanCamera(panDirection);
+		}
+
+		renderer->Render(screen);
 
 		SDL_Flip(screen);
 	}
@@ -78,8 +116,23 @@ int main (int argc, char* argv[])
 
 void Init()
 {
-	Triangle tri1 = Triangle(vec3(), vec3(), vec3());
+	Mesh *my = new Mesh();
 
-	renderer = Renderer();
-	renderer.Add(&tri1);
+	float size = 1;
+	
+	my->AddVertex(Vertex(0, size, 0));
+	my->AddVertex(Vertex(0, 0, 0));
+
+	Mesh *mx = new Mesh();
+	mx->AddVertex(Vertex(0, 0, 0));
+	mx->AddVertex(Vertex(size, 0, 0));
+
+	Mesh *mz = new Mesh();
+	mz->AddVertex(Vertex(0, 0, 0));
+	mz->AddVertex(Vertex(0, 0, size));
+
+	renderer = new Renderer();
+	renderer->Add(my);
+	renderer->Add(mx);
+	renderer->Add(mz);
 }

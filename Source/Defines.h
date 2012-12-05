@@ -1,0 +1,8 @@
+#ifndef DEFINES_H
+#define DEFINES_H
+
+#define SCREEN_WIDTH 1024	
+#define SCREEN_HEIGHT 768
+#define SCREEN_COLORDEPTH 32
+
+#endif
