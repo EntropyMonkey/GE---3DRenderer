@@ -82,7 +82,7 @@ void Init()
 
 Mesh* CreateCube()
 {
-	// creates a leak
+	// it's a leaking cube
 	Mesh *cube = new Mesh(); // cube front
 
 	float size = 1.0f;

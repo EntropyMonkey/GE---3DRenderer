@@ -45,7 +45,6 @@ void Renderer::draw(Mesh *mesh, SDL_Surface *screen)
 		vec4 v = vec4(vertex->position.x, vertex->position.y, vertex->position.z, 1);
 
 		// convert vertex from object coords to clip coords
-
 		mat4 modelViewProjectionMatrix = camera.projectionMatrix * 
 			camera.viewMatrix * mesh->modelMatrix;
 
