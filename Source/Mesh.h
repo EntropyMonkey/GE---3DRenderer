@@ -14,14 +14,9 @@ public:
 		modelMatrix = glm::mat4(1.0f);
 	}
 
-	virtual void GetVertices(std::vector<Vertex> &vertexList)
+	virtual std::vector<Vertex> GetVertices()
 	{
-		for (std::vector<Vertex>::iterator it = vertices.begin();
-			it != vertices.end();
-			it++)
-		{
-			vertexList.push_back(*it);
-		}
+		return vertices;
 	}
 
 	void AddVertex(Vertex v)

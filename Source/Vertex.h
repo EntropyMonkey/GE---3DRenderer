@@ -15,6 +15,9 @@ public:
 	glm::vec3 position;
 
 	glm::vec2 screenPos;
+
+	float screenPosX;
+	float screenPosY;
 };
 
 #endif

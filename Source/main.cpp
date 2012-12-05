@@ -24,6 +24,7 @@ using namespace std;
 using namespace glm;
 
 void Init();
+Mesh* CreateCube();
 
 Renderer *renderer;
 
@@ -47,8 +48,10 @@ int main (int argc, char* argv[])
 
 	Init();
 
-	bool pan;
-	vec3 panDirection;
+	bool rotate;
+	bool moveUpDown;
+	float rotationDir;
+	float moveDir;
 
 	quit = false;
 	while(!quit)
@@ -60,50 +63,6 @@ int main (int argc, char* argv[])
 				quit = true;
 				continue;
 			}
-
-			if(event.type == SDL_KEYDOWN)
-            {
-				if (event.key.keysym.sym == SDLK_LEFT)
-				{
-					pan = true;
-					panDirection = vec3(-1, 0, 0);
-				}
-				else if (event.key.keysym.sym == SDLK_RIGHT)
-				{
-					pan = true;
-					panDirection = vec3(1, 0, 0);
-				}
-				else if (event.key.keysym.sym == SDLK_UP)
-				{
-					pan = true;
-					panDirection = vec3(0, 0, 1);
-				}
-				else if (event.key.keysym.sym == SDLK_DOWN)
-				{
-					pan = true;
-					panDirection = vec3(0, 0, -1);
-				}
-			}
-			else if (event.type == SDL_KEYUP)
-			{
-				if (event.key.keysym.sym == SDLK_LEFT || 
-					event.key.keysym.sym == SDLK_RIGHT ||
-					event.key.keysym.sym == SDLK_UP ||
-					event.key.keysym.sym == SDLK_DOWN)
-				{
-					pan = false;
-				}
-			}
-			else if( event.type == SDL_QUIT )
-            {
-				quit = true;
-            }
-		}
-
-		if (pan)
-		{
-			panDirection *= 0.1f;
-			renderer->PanCamera(panDirection);
 		}
 
 		renderer->Render(screen);
@@ -116,23 +75,48 @@ int main (int argc, char* argv[])
 
 void Init()
 {
-	Mesh *my = new Mesh();
-
-	float size = 1;
-	
-	my->AddVertex(Vertex(0, size, 0));
-	my->AddVertex(Vertex(0, 0, 0));
-
-	Mesh *mx = new Mesh();
-	mx->AddVertex(Vertex(0, 0, 0));
-	mx->AddVertex(Vertex(size, 0, 0));
-
-	Mesh *mz = new Mesh();
-	mz->AddVertex(Vertex(0, 0, 0));
-	mz->AddVertex(Vertex(0, 0, size));
 
 	renderer = new Renderer();
-	renderer->Add(my);
-	renderer->Add(mx);
-	renderer->Add(mz);
+	renderer->Add(CreateCube());
+}
+
+Mesh* CreateCube()
+{
+	// creates a leak
+	Mesh *cube = new Mesh(); // cube front
+
+	float size = 1.0f;
+	
+	// draw a cube
+
+	Vertex A = Vertex(0, 0, 0);
+	Vertex B = Vertex(size, 0, 0);
+	Vertex C = Vertex(size, size, 0);
+	Vertex D = Vertex(0, size, 0);
+	
+	Vertex E = Vertex(0, 0, size);
+	Vertex F = Vertex(size, 0, size);
+	Vertex G = Vertex(size, size, size);
+	Vertex H = Vertex(0, size, size);
+
+	cube->AddVertex(A);
+	cube->AddVertex(B);
+	cube->AddVertex(C);
+	cube->AddVertex(G);
+	cube->AddVertex(F);
+	cube->AddVertex(C);
+	cube->AddVertex(D);
+	cube->AddVertex(H);
+	cube->AddVertex(G);
+	cube->AddVertex(D);
+	cube->AddVertex(A);
+	cube->AddVertex(E);
+	cube->AddVertex(H);
+	cube->AddVertex(A);
+	cube->AddVertex(B);
+	cube->AddVertex(F);
+	cube->AddVertex(E);
+	cube->AddVertex(B);
+
+	return cube;
 }

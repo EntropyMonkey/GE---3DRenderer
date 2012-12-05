@@ -19,6 +19,9 @@ void Renderer::Add(Mesh *m)
 
 void Renderer::Render(SDL_Surface *screen)
 {
+	camera.Rotate(1.0f);
+	camera.UpdateViewMatrix();
+
 	clearScreen(screen);
 	for (std::vector<Mesh*>::iterator it = meshes->begin();
 		it != meshes->end();
@@ -28,10 +31,11 @@ void Renderer::Render(SDL_Surface *screen)
 	}
 }
 
+
 void Renderer::draw(Mesh *mesh, SDL_Surface *screen)
 {	
-	std::vector<Vertex> vertices = std::vector<Vertex>();
-	mesh->GetVertices(vertices);
+	std::vector<Vertex> vertices = mesh->GetVertices();
+	std::vector<Vertex>::iterator nextVertex;
 
 	for (std::vector<Vertex>::iterator vertex = vertices.begin();
 		vertex != vertices.end();
@@ -48,17 +52,15 @@ void Renderer::draw(Mesh *mesh, SDL_Surface *screen)
 		v = modelViewProjectionMatrix * v;
 
 		// normalize clip coordinates / get normalized device coordinates
-		if (v.w != 0)
-			v = v / v.w;
+		v = v / v.w;
 
 		// clip vertices outside the viewport
-		//if ((v.x < -1 || v.x > 1) ||
-		//	(v.y < -1 || v.y > 1) ||
-		//	(v.z < -1 || v.z > 1))
-		//{
-		//	// go to next vertex if this one is outside
-		//	continue;
-		//}
+		if ((v.x < -1 || v.x > 1) ||
+			(v.y < -1 || v.y > 1))
+		{
+			// go to next vertex if this one is outside
+			continue;
+		}
 
 		// map clip coordinates to screen coordinates
 		float width = screen->w;
@@ -70,9 +72,13 @@ void Renderer::draw(Mesh *mesh, SDL_Surface *screen)
 
 		drawPixel(vertex->screenPos, screen, 255, 0, 0);
 		
+		nextVertex = vertex;
+		nextVertex ++;
+		// rendering meshes as line loops
 		if (vertex != vertices.begin())
 			drawLine((vertex-1)->screenPos, vertex->screenPos, screen);
-		else if (vertex == vertices.end() - 1)
+		
+		if (nextVertex == vertices.end())
 			drawLine(vertices.begin()->screenPos, vertex->screenPos, screen);
 	}
 }
@@ -114,13 +120,6 @@ void Renderer::clearScreen(SDL_Surface *surface)
 			setPixel(surface, x, y, SDL_MapRGB(surface->format, 0, 0, 0));
 		}
 	}
-}
-
-void Renderer::PanCamera(glm::vec3 direction)
-{
-	camera.position += direction;
-	camera.UpdateViewMatrix();
-	camera.UpdateProjectionMatrix();
 }
 
 Uint32 Renderer::getPixel(SDL_Surface *surface, int x, int y)

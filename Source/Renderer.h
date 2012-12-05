@@ -20,14 +20,10 @@ public:
 
 	void					Render(SDL_Surface *screen);
 
-	void					PanCamera(glm::vec3 direction);
-
 private:
 	std::vector<Mesh*>*		meshes;
 
 	Camera					camera;
-
-	void					calculateScreenPositions();
 
 	void					draw(Mesh *mesh, SDL_Surface *screen);
 	void					draw(Vertex vertex);

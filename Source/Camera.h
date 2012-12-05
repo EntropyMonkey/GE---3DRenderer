@@ -6,23 +6,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Defines.h"
-#include "VectorHelper.h"
 
 class Camera
 {
 public:
 	struct Frustum
 	{
-		float width;
-		float height;
 		float near;
 		float far;
+		float fov;
+		float aspect;
 
-		Frustum(float fov, float aspect, float _near, float _far) :
-			near(_near), far(_far)
+		Frustum(float _fov, float _aspect, float _near, float _far) :
+			fov(_fov), aspect(_aspect), near(_near), far(_far)
 		{
-			width = -2 * near * tan(fov * 0.5f);
-			height = width / aspect;
 		}
 
 		Frustum() {}
@@ -34,13 +31,15 @@ public:
 	Frustum frustum;
 
 	glm::vec3 position;
-	glm::vec3 lookAt;
+	glm::vec3 target;
 	glm::vec3 up;
 
 	Camera();
 
 	void UpdateViewMatrix();
 	void UpdateProjectionMatrix();
+
+	void Rotate(float angle);
 };
 
 #endif
